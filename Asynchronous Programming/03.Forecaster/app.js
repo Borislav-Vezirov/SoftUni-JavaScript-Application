@@ -23,10 +23,6 @@ function attachEvents() {
         
     async function getAllData(){
 
-        currentEl.textContent = '';
-
-        upcomingEl.textContent = '';
-
         let url  = `http://localhost:3030/jsonstore/forecaster/locations/`;
         
         try {
@@ -46,13 +42,24 @@ function attachEvents() {
             upcomingWeather(city);
 
         } catch (error) {
-            
+
         }
     }
 
     async function currentLocation(city){
 
-        let currentUrl = `http://localhost:3030/jsonstore/forecaster/today/${city.code}`;
+        let div = document.querySelector('.forecasts');
+
+        if(div){
+            div.remove();
+        }
+
+        if(forecast.firstElementChild.firstElementChild.textContent === 'Error'){
+            forecast.firstElementChild.firstElementChild.textContent = 'Current conditions';
+        }
+
+        try {
+            let currentUrl = `http://localhost:3030/jsonstore/forecaster/today/${city.code}`;
 
             let currentRes = await fetch(currentUrl);
 
@@ -61,39 +68,58 @@ function attachEvents() {
             let symbolSapnEl = el('span', {className: 'condition symbol'}, `${weatherSymbols[currentData.forecast.condition]}`);
 
             let conditionSpanEl = el('span', {className: 'condition'}, el('span', {className: 'forecast-data'},                                                          currentData.name), 
-                                                                       el('span', {className: 'forecast-data'}, `${currentData.forecast.low}°/${currentData.forecast.high}°`), 
-                                                                       el('span', {className: 'forecast-data'}, `${currentData.forecast.condition}`))
+                                                                        el('span', {className: 'forecast-data'}, `${currentData.forecast.low}°/${currentData.forecast.high}°`), 
+                                                                        el('span', {className: 'forecast-data'}, `${currentData.forecast.condition}`))
 
             let forecastDiv = el('div', {className: 'forecasts'}, symbolSapnEl, conditionSpanEl);
 
             currentEl.appendChild(forecastDiv);
 
+            forecast.style.display = 'block';    
+        } catch (error) {
+            
             forecast.style.display = 'block';
+
+            forecast.firstElementChild.firstElementChild.textContent = 'Error';
+
+        }
+        
     }
 
     async function upcomingWeather(city){
 
-        let upcomingUrl = `http://localhost:3030/jsonstore/forecaster/upcoming/${city.code}`;
-
-        let upcomingRes = await fetch(upcomingUrl);
-
-        let upcomingData = await upcomingRes.json();
-
-        let createInfoDiv = el('div', {className:'forecast-info'})
-
-        for (let day of upcomingData.forecast) {
-            
-            
-            let symbolSpanEl    = el('span', {className: 'symbol'}, `${weatherSymbols[day.condition]}`);
-            let temperatureSpan = el('span', {className: 'forecast-data'}, `${day.low}°/${day.high}°`);
-            let conditionSpan   = el('span', {className: 'forecast-data'}, `${day.condition}`);
-            
-            let upcommingSpan   = el('span', {className: 'upcoming'}, symbolSpanEl, temperatureSpan, conditionSpan);
-            
-            createInfoDiv.appendChild(upcommingSpan);
+        let div = document.querySelector('.forecast-info')
+        if(div){
+            div.remove();
         }
 
-        upcomingEl.appendChild(createInfoDiv);
+        try {
+
+            let upcomingUrl = `http://localhost:3030/jsonstore/forecaster/upcoming/${city.code}`;
+
+            let upcomingRes = await fetch(upcomingUrl);
+
+            let upcomingData = await upcomingRes.json();
+
+            let createInfoDiv = el('div', {className:'forecast-info'})
+
+            for (let day of upcomingData.forecast) {
+                
+                
+                let symbolSpanEl    = el('span', {className: 'symbol'}, `${weatherSymbols[day.condition]}`);
+                let temperatureSpan = el('span', {className: 'forecast-data'}, `${day.low}°/${day.high}°`);
+                let conditionSpan   = el('span', {className: 'forecast-data'}, `${day.condition}`);
+                
+                let upcommingSpan   = el('span', {className: 'upcoming'}, symbolSpanEl, temperatureSpan, conditionSpan);
+                
+                createInfoDiv.appendChild(upcommingSpan);
+            }
+
+            upcomingEl.appendChild(createInfoDiv);
+
+        } catch (error) {
+            
+        }
     }
 
     function el(type, attr, ...content){
