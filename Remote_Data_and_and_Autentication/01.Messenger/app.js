@@ -9,6 +9,8 @@ function attachEvents() {
         };
 
         sendMessage(data);
+        
+        await getMessages();
 
         author.value = '';
         content.value = '';
