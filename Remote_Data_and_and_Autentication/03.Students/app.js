@@ -78,7 +78,7 @@ async function request(url, options){
 
         if(res.status !== 200){
 
-            const error = await res.message.json();
+            const error = await res.json();
             throw new Error(error.message);
         }
 
