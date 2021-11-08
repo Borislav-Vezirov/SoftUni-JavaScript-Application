@@ -1,17 +1,18 @@
 window.addEventListener('DOMContentLoaded', () => {
 
     const userData = JSON.parse(localStorage.getItem('userData'));
-
+    
     const loadBtn    = document.querySelector('#loadBtn');
     const addBtn     = document.querySelector('#addForm .add');
     const catchesDiv = document.querySelector('#catches');
-
+    
     loadBtn.addEventListener('click', loadData);
     const addForm = document.getElementById('addForm').addEventListener('submit', onCreate);
     
     if(userData !== null){
         document.getElementById('guest').style.display = 'none'
         addBtn.disabled = false
+        document.getElementById('showEmail').textContent = userData.email;
     }else{
         document.getElementById('user').style.display = 'none'
         loadBtn.disabled = true;
