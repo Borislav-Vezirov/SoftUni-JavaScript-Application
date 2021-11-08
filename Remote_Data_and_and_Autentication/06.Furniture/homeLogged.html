@@ -10,9 +10,9 @@
     <header>
         <h1>Furniture List</h1>
         <nav>
-            <a class="active">Catalog</a>
+            <!-- <a class="active">Catalog</a> -->
             <div id="user">
-                <a id="logoutBtn" href="javascript:void(0)">Logout</a>
+                <a id="logoutBtn">Logout</a>
             </div>
             <!-- <div id="guest">
                 <a href="login.html">Login</a>
@@ -33,7 +33,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h2>Create Product</h2>
-                                <form action="" method="post">
+                                <form id="createForm">
                                     <label>Name: <input type="text" name="name"></label>
                                     <label>Price: <input type="text" name="price"></label>
                                     <label>Factor: <input type="text" name="factor"></label>
@@ -51,20 +51,20 @@
                                             <th>Mark</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tBody">
                                         <tr>
                                             <td>
                                                 <img
                                                     src="https://www.lidl-shop.nl/media/fcf868f9526b38d0b0a43cc2ace72b80.jpeg">
                                             </td>
                                             <td>
-                                                <p>Office chair</p>
+                                                <p id="item-name">Office chair</p>
                                             </td>
                                             <td>
-                                                <p>160</p>
+                                                <p id="item-price">160</p>
                                             </td>
                                             <td>
-                                                <p>0.5</p>
+                                                <p id="item-refactor">0.5</p>
                                             </td>
                                             <td>
                                                 <input type="checkbox"/>
@@ -90,13 +90,13 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <button>Buy</button>
+                                <button id="buyBtn">Buy</button>
                                 <hr>
-                                <div class="orders">
-                                    <p>Bought furniture: <span>Office chair, Sofa</span></p>
-                                    <p>Total price: <span>419 $</span></p>
-                                    <button>All orders</button>
+                                <div class="orders" id="divOrders">
+                                    <p>Bought furniture: <span></span></p>
+                                    <p>Total price: <span></span></p>
                                 </div>
+                                <button id="allOrders">All orders</button>
                             </div>
                         </div>
                     </div>
@@ -107,6 +107,7 @@
         </div>
     </main>
     <script src="solution.js"></script>
+    <script src="logout.js"></script>
 </body>
 
 </html>

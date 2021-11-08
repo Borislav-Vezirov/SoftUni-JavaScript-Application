@@ -137,7 +137,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const catchDiv = el('div', {class: 'catch'});
 
         const angler        = el('label', {}, 'Angler');
-        const anglerInput   = el('input', {type: 'text', class: 'angler', value: data.angler});
+        const anglerInput   = el('input', {type: 'text', class: 'angler', value: `${data.angler}`});
         const weight        = el('label', {}, 'Weight');
         const weightInput   = el('input', {type: 'text', class: 'weight', value: `${data.weight}`});
         const species       = el('label', {}, 'species');
