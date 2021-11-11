@@ -1,46 +1,25 @@
-import { addMovieSetupSection } from "./addMovies.js";
-import { editSetupSection } from "./editMovie.js";
-import { loginSetupSection } from "./login.js";
-import { detailSetupSection } from "./movieDetails.js";
-import { registerHandler, registerSetupSection } from "./register.js";
+import { showHome } from "./home.js";
+import { showLogin } from "./login.js";
+import { showRegister } from "./register.js";
+import { showDetails } from "./movieDetails.js";
+import { showEdit } from "./editMovie.js";
 
-const movieSection    = document.getElementById('movie');
-const registerSection = registerSetupSection(document.getElementById('form-sign-up'));
-const loginSection    = loginSetupSection(document.getElementById('form-login'));
-const addMovieSection = addMovieSetupSection(document.getElementById('add-moviep'));
-const detailsSection  = detailSetupSection(document.getElementById('movie-example'));
-const editSection     = editSetupSection(document.getElementById('edit-movie'));
 
-const registerBtn  = document.getElementById('registerBtn');
-const logoutBtn    = document.getElementById('logoutBtn');
-const welcomeEmail = document.getElementById('showEmail');
+const views = {
+    'home-link'    : showHome,
+    'login-link'   : showLogin,
+    'register-link': showRegister
+}
 
-function setup(){
-    const userData = JSON.parse(localStorage.getItem('userData'));
-
-    registerBtn.addEventListener('click', registerHandler);
-    logoutBtn.addEventListener('click', onLogout);
+document.querySelector('nav').addEventListener('click', (e) => {
     
-    if(userData !== null){
-        registerBtn.classList.add('hidden');
-        welcomeEmail.textContent = `Welcome, ${userData.email}`;
-        const showMoviesLink = document.querySelector('.show-movies-link').addEventListener('click', showMovies);
-    }else{
-        welcomeEmail.textContent = `Welcome guest`;
-        logoutBtn.classList.add('hidden');
+    const view = views[e.target.id];
+
+    if(typeof view == 'function'){
+        e.preventDefault();
+        view()
     }
     
-}
+})
 
-setup();
-
-function showMovies(e){
-    e.preventDefault();
-    movieSection.classList.remove('hidden');
-}
-
-function onLogout(e){
-    e.preventDefault();
-    localStorage.removeItem('userData');
-    location.reload();
-}
+showHome()

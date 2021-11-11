@@ -110,7 +110,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const parentEl = e.target.parentElement;
 
-        const currIdd = e.target.id;
+        const currIdd  = e.target.id;
         
         try {
             const res = await fetch('http://localhost:3030/data/catches/' + currIdd, {

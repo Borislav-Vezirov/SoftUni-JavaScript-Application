@@ -1,7 +1,10 @@
+import { showView } from "./dom.js";
 
-let section;
+const section = document.querySelector('#movie-example');
 
-export function detailSetupSection(domElement){
+section.remove();
 
-    section = domElement
+export function showDetails(id){
+    
+    showView(section);
 }

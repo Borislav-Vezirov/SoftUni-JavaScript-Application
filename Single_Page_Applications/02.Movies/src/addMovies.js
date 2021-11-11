@@ -1,8 +1,11 @@
+import { showView } from "./dom.js";
 
-let section;
+const section = document.querySelector('#add-movie');
 
-export function addMovieSetupSection(domElement){
+section.remove();
 
-    section = domElement
+export function showAddMovie(){
+
+    showView(section);
 }
 
