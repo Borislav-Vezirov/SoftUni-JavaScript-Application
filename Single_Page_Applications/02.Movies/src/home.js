@@ -1,78 +1,56 @@
-import { showAddMovie } from "./addMovies.js";
-import { el, showView } from "./dom.js";
-import { showDetails }  from "./movieDetails.js";
+import { e } from './dom.js';
+import { showDetails } from './details.js';
 
-const section = document.querySelector('#home-page');
-const moviesContainer = section.querySelector('.card-deck.d-flex.justify-content-center')
+async function getMovies() {
+    const response = await fetch('http://localhost:3030/data/movies');
+    const data = await response.json();
 
-section.querySelector('#createMovie').addEventListener('click', (e) => {
-    e.preventDefault();
-    showAddMovie();
-})
-
-
-section.remove();
-
-export function showHome(){
-
-    showView(section);
-    loadMovies();
+    return data;
 }
 
-moviesContainer.addEventListener('click', (e) => {
-    e.preventDefault();
+function createMoviePreview(movie) {
+    const element = document.createElement('div');
+    element.className = 'card mb-4';
+    element.innerHTML = `
+        <img class="card-img-top" src="${movie.img}"
+            alt="Card image cap" width="400">
+        <div class="card-body">
+            <h4 class="card-title">${movie.title}</h4>
+        </div>
+        <div class="card-footer">
+            <button id="${movie._id}" type="button" class="btn btn-info movieDetailsLink">Details</button>
+        </div>`;
 
-    let target = e.target;
-    
-    if(target.tagName == 'BUTTON'){
+    return element;
+}
 
-        target = target.parentElement;
-        
-        let id = target.dataset.id;
-        
-        showDetails(id)
-    }
-})
+let main;
+let section;
+let container;
 
-async function loadMovies(){
+export function setupHome(mainTarget, sectionTarget) {
+    main = mainTarget;
+    section = sectionTarget;
+    container = section.querySelector('.card-deck.d-flex.justify-content-center');
 
-    try {
-        
-        const res = await fetch('http://localhost:3030/data/movies');
-
-        if(res.ok !== true){
-            const err = await res.json();
-            throw new Error(err.message);
+    container.addEventListener('click', event => {
+        if (event.target.classList.contains('movieDetailsLink')) {
+            showDetails(event.target.id);
         }
-
-        const data = await res.json();
-
-        moviesContainer.replaceChildren(...data.map(createHtmlEl));
-
-    } catch (error) {
-        alert(error.message);
-    }
+    });
 }
 
-function createHtmlEl(movie){
+export async function showHome() {
+    container.innerHTML = 'Loading...';
+    main.innerHTML = '';
+    main.appendChild(section);
 
-    const cardDiv     = el('div', {class: 'card mb-4'});
-    const img         = el('img', {class: 'card-img-top', src: movie.img, alt: 'Card image cap', width: '400'});
-    const cardBodyDiv = el('div', {class: 'card-body'});
-    const h4Title     = el('h4', {class: 'card-title'}, movie.title);
-    const footerDiv   = el('div', {class: 'card-footer'});
-    const anckerTag   = el('a', {href: '#'});
-    const detailBtn   = el('button', {class: 'btn btn-info'}, 'Details')
-    anckerTag.dataset.id = movie._id
+    const movies = await getMovies();
+    const cards = movies.map(createMoviePreview);
 
-    cardBodyDiv.appendChild(h4Title);
+    const fragment = document.createDocumentFragment();
+    cards.forEach(c => fragment.appendChild(c));
 
-    anckerTag.appendChild(detailBtn);
-    footerDiv.appendChild(anckerTag);
-
-    cardDiv.appendChild(img);
-    cardDiv.appendChild(cardBodyDiv);
-    cardDiv.appendChild(footerDiv);
-
-    return cardDiv;
+    container.innerHTML = '';
+    container.appendChild(fragment);
 }

@@ -1,26 +1,24 @@
+export function e(type, attributes, ...content) {
+    const result = document.createElement(type);
 
-const main = document.querySelector('main');
-
-export function showView(section){
-
-    main.replaceChildren(section);
-}
-
-export function el(type, attr, ...content){
-        
-    let element = document.createElement(type);
-
-    for (const key in attr) {
-        element.setAttribute(key, attr[key]);
-    }
-
-    for (let item of content) {
-
-        if(typeof item == 'string' || typeof item == 'number'){
-            item = document.createTextNode(item)
+    for (let [attr, value] of Object.entries(attributes || {})) {
+        if (attr.substring(0, 2) == 'on') {
+            result.addEventListener(attr.substring(2).toLocaleLowerCase(), value);
+        } else {
+            result[attr] = value;
         }
-        element.appendChild(item);
     }
 
-    return element;
+    content = content.reduce((a, c) => a.concat(Array.isArray(c) ? c : [c]), []);
+
+    content.forEach(e => {
+        if (typeof e == 'string' || typeof e == 'number') {
+            const node = document.createTextNode(e);
+            result.appendChild(node);
+        } else {
+            result.appendChild(e);
+        }
+    });
+
+    return result;
 }

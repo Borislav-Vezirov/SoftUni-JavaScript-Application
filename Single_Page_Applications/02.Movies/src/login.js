@@ -1,54 +1,55 @@
-import { showView } from "./dom.js";
-import { showHome } from "./home.js";
+import { showHome } from './home.js';
 
-const section = document.querySelector('#form-login');
+async function onLoginSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
 
-section.querySelector('form').addEventListener('submit', onLogin);
+    const email = formData.get('email');
+    const password = formData.get('password');
 
-section.remove();
+    if (email == '' || password == '') {
+        return alert('All fields are required!');
+    }
 
-export function showLogin(){
+    const response = await fetch(`http://localhost:3030/users/login`, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    });
 
-    showView(section);
+    if (!response.ok) {
+        const error = await response.json();
+        return alert(error.message);
+    }
+
+    event.target.reset();
+    const data = await response.json();
+
+    sessionStorage.setItem('userToken', data.accessToken);
+    sessionStorage.setItem('userId', data._id);
+    sessionStorage.setItem('userEmail', data.email);
+
+    document.getElementById('welcomeMessage').textContent = `Welcome, ${email}`;
+
+    [...document.querySelectorAll('nav .user')].forEach(x => x.style.display = 'block');
+    [...document.querySelectorAll('nav .guest')].forEach(x => x.style.display = 'none');
+
+    showHome();
 }
 
-async function onLogin(e){
+let main;
+let section;
 
-    e.preventDefault();
+export function setupLogin(mainTarget, sectionTarget) {
+    main = mainTarget;
+    section = sectionTarget;
 
-    const formData = new FormData(e.target);
+    const form = section.querySelector('form');
 
-    const email = formData.get('email')
-    const pass  = formData.get('password')
+    form.addEventListener('submit', onLoginSubmit);
+}
 
-    const data = { email, pass }
-
-    try {
-        
-        const res = await fetch('http://localhost:3030/users/login', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-
-        if(res.ok !== true){
-            const err = await res.json();
-            throw new Error(err.message);
-        }
-
-        const result = await res.json();
-
-        localStorage.setItem('userData', JSON.stringify({
-            email: result.email,
-            id: result._id,
-            token: result.accessToken
-        }));
-
-        e.target.reset();
-
-        showHome();
-
-    } catch (error) {
-        alert(error.message);
-    }
+export async function showLogin() {
+    main.innerHTML = '';
+    main.appendChild(section);
 }
