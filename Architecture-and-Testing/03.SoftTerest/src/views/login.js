@@ -1,5 +1,4 @@
 import { login } from '../data.js';
-import { el, showSection } from '../dom.js';
 
 const section = document.getElementById('login-page');
 

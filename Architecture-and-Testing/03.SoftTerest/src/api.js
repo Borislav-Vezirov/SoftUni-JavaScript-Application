@@ -1,16 +1,15 @@
 
-const host = 'http://localhost:3030/';
 
-export async function request(url, options){
+async function request(url, options){
 
     try {
         
-        const response = await fetch(host + url, options);
+        const response = await fetch(url, options);
 
-        if(response.ok != true){
+        if(response.ok !== true){
 
             if(response.status == 403){
-                localStorage.removeItem('userData');
+                sessionStorage.removeItem('userData');
             }
 
             const err = await response.json();
@@ -29,22 +28,22 @@ export async function request(url, options){
     }
 }
 
-export function createOptions(method = 'get', data){
+function createOptions(method = 'get', data){
 
     const options = {
         method,
         headers: {}
     };
 
-    if(data != undefined){
+    if(data !== undefined){
         
         options.headers['Content-Type'] = 'application/json';
         options.body = JSON.stringify(data);
     }
 
-    const userData = JSON.parse(localStorage.getItem('userData'));
+    const userData = JSON.parse(sessionStorage.getItem('userData'));
 
-    if(userData != undefined){
+    if(userData != null){
         options.headers['X-Authorization'] = userData.token;
     }
 
@@ -73,20 +72,20 @@ export async function del(url){
 
 export async function login(email, password){
 
-    const response = await request('users/login', createOptions('post', {email, password}));
-
+    const response = await post('http://localhost:3030/users/login', { email, password });
+    
     const userData = {
         email: response.email,
         id   : response._id,
         token: response.accessToken
     }
-
-    localStorage.setItem(JSON.stringify(userData));
+    
+    sessionStorage.setItem('userData', JSON.stringify(userData));
 } 
 
 export async function register(email, password){
 
-    const response = await request('users/register', createOptions('post', {email, password}));
+    const response = await post('http://localhost:3030/users/register', {email, password});
 
     const userData = {
         email: response.email,
@@ -94,13 +93,13 @@ export async function register(email, password){
         token: response.accessToken
     }
 
-    localStorage.setItem(JSON.stringify(userData));
+    sessionStorage.setItem('userData', JSON.stringify(userData));
 } 
 
 export async function logout(){
 
-    await request('users/logout', createOptions());
+    await get('http://localhost:3030/users/logout');
 
-    localStorage.removeItem('userData');
+    sessionStorage.removeItem('userData');
 } 
 

@@ -1,6 +1,7 @@
 import { showSection } from "./dom.js"
 import { showCatalogPage } from "./views/catalog.js"
 import { showCreatePage } from "./views/create.js"
+import { showDetailsPage } from "./views/details.js"
 import { showHomePage } from "./views/home.js"
 import { showLoginPage } from "./views/login.js"
 import { showRegisterPage } from "./views/register.js"
@@ -19,7 +20,8 @@ const views = {
     'catalog' : showCatalogPage,
     'create'  : showCreatePage,
     'login'   : showLoginPage,
-    'register': showRegisterPage
+    'register': showRegisterPage,
+    'details' : showDetailsPage
 }
 
 const nav = document.querySelector('nav');
@@ -29,9 +31,10 @@ nav.addEventListener('click', onNavigate);
 const ctx = {
 
     goTo,
-    showSection
+    showSection,
+    updateNav
 }
-
+updateNav();
 goTo('home');
 
 function onNavigate(e){
@@ -54,7 +57,7 @@ function goTo(name, ...params){
 }
 
 function updateNav(){
-    const userData = JSON.parse(localStorage.getItem('userData'));
+    const userData = JSON.parse(sessionStorage.getItem('userData'));
     
     if(userData != null){
         [...nav.querySelectorAll('.user')].forEach(x => x.style.display = 'block');

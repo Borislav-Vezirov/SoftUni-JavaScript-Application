@@ -4,8 +4,12 @@ import { el, showSection} from '../dom.js';
 const section = document.getElementById('dashboard-holder');
 section.remove();
 
-export async function showCatalogPage(ctx){
+section.addEventListener('click', onDetails);
 
+let ctx = null;
+
+export async function showCatalogPage(ctxTarget){
+    ctx = ctxTarget
     ctx.showSection(section);
     loadIdeas();
 }
@@ -15,16 +19,19 @@ async function loadIdeas(){
     const ideas = await getAllIdeas();
 
     if(ideas.length == 0){
+        
         section.replaceChildren(el('h1', {}, 'No ideas yet! Be the first one :)'));
+
+    }else{
+
+        const fragment = document.createDocumentFragment();
+    
+        ideas.map(createIdea).forEach(element => {
+            fragment.appendChild(element);
+        });
+     
+        section.replaceChildren(fragment);
     }
-
-    const fragment = document.createDocumentFragment();
-
-    ideas.map(createIdea).forEach(element => {
-        fragment.appendChild(element);
-    });
- 
-    section.replaceChildren(fragment);
 }
 
 function createIdea(idea){
@@ -42,5 +49,17 @@ function createIdea(idea){
     div.appendChild(anchorTag);
 
     return div;
+}
+
+function onDetails(e){
+
+    if(e.target.tagName == 'A'){
+        const id = e.target.dataset.id;
+
+        e.preventDefault();
+        ctx.goTo('details', id);
+    }
+
+
 }
 
