@@ -6,6 +6,7 @@ export const logout   = api.logout;
 
 
 export async function getAllIdeas(){
+    
     return api.get(`http://localhost:3030/data/ideas?select=_id%2Ctitle%2Cimg&sortBy=_createdOn%20desc`);
 }
 
