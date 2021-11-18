@@ -17,6 +17,7 @@ const template = (cat) => html `
     </li>
 `
 cats.forEach(x => x.info = false);
+
 update();
 
 function update(){
