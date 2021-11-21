@@ -1,6 +1,6 @@
 import { clearUserData, setUserData, getUserData } from "../utils.js";
 
-const host = 'http://localhost:3030/';
+const host = 'http://localhost:3030';
 
 export async function request(url, options){
 
@@ -74,7 +74,7 @@ export async function del(url){
 
 export async function login(email, password){
 
-    const response = await request('users/login', createOptions('post', {email, password}));
+    const response = await request('/users/login', createOptions('post', {email, password}));
 
     const userData = {
         email: response.email,
@@ -87,7 +87,7 @@ export async function login(email, password){
 
 export async function register(email, password){
 
-    const response = await request('users/register', createOptions('post', {email, password}));
+    const response = await request('/users/register', createOptions('post', {email, password}));
 
     const userData = {
         email: response.email,
@@ -100,7 +100,7 @@ export async function register(email, password){
 
 export async function logout(){
 
-    await request('users/logout', createOptions());
+    await request('/users/logout', createOptions());
 
     clearUserData();
 } 

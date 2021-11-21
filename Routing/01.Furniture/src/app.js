@@ -5,8 +5,11 @@ import { detailsPage } from './views/details.js';
 import { editPage } from './views/edit.js';
 import { loginPage } from './views/login.js';
 import { registerPage } from './views/register.js';
+import * as api from './api/data.js' 
 
 const root = document.querySelector('.container');
+
+window.api = api;
 
 page(decorateContext);
 page('/', catalogPage);
