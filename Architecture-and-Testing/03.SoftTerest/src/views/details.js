@@ -1,43 +1,59 @@
-import { getIdea } from '../data.js';
-import { el, showSection} from '../dom.js';
+import { deleteIdea, detailIdea } from "../api/data.js";
+import { html, until } from "../library.js";
+import { getUserData } from "../utils.js";
 
-const section = document.getElementById('details-page');
-section.remove();
+const template = (dataPromise) => html `
 
-export async function showDetailsPage(ctx, id){
+    <div class="container home some"> 
+        ${until(dataPromise, html `<p>Loading...</p>`)}        
+    </div>
+`
 
-    ctx = showSection(section);
-    loadIdea(id)
+const detailTemplate = (idea, isOwner, onDelete) => html `
+
+    <img class="det-img" src=${idea.img}/>
+        <div class="desc">
+            <h2 class="display-5">${idea.title}</h2>
+            <p class="infoType">Description:</p>
+            <p class="idea-description">${idea.description}</p>
+        </div>
+        <div class="text-center">
+            ${isOwner ? html `<div>
+                <a @click=${onDelete} class="btn detb" href=javascript:void(0)>Delete</a>
+            </div>` : ''}
+         </div>
+`
+export function detailsPage(ctx){
+
+   ctx.render(template(loadDetails(ctx.params.id, onDelete)));
+
+   async function onDelete(){
+
+        const choise = confirm('Are you sure you want to delete this idea?');
+
+        if(choise){
+            await deleteIdea(ctx.params.id);
+            ctx.page.redirect('/dashboard');
+        }
+   }
+   
 }
 
-async function loadIdea(id){
 
-    const idea = await  getIdea(id);
+async function loadDetails(id, onDelete){
 
-    section.replaceChildren(createHtmlIdea(idea));
+    const idea = await detailIdea(id);
+
+    const userData = getUserData();
+
+    let isOwner = null;
+
+    if(userData != null){
+
+        isOwner = userData.id == idea._ownerId;
+    }
+
+
+    return detailTemplate(idea, isOwner, onDelete)
 }
 
-function createHtmlIdea(idea){
-
-    const fragment = document.createDocumentFragment();
-
-    const img     = el('img', {class: 'det-img', src: idea.img});
-    const descDiv = el('div', {class: 'desc'});
-        const h2     = el('h2', {class: 'display-5 '}, idea.title);
-        const pInfo  = el('p', {class: 'infoType'}, 'Description');
-        const pDesc  = el('p', {class: 'idea-description'}, idea.description);
-    const textDiv = el('div', {class: 'text-center'});
-        const anchor = el('a', {class: 'btn detb', href: '#'}, 'Delete');
-
-    descDiv.appendChild(h2);
-    descDiv.appendChild(pInfo);
-    descDiv.appendChild(pDesc);
-
-    textDiv.appendChild(anchor);
-
-    fragment.appendChild(img);
-    fragment.appendChild(descDiv);
-    fragment.appendChild(textDiv);
-
-    return fragment;
-}

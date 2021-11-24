@@ -65,9 +65,7 @@ export function createPage(ctx) {
 
         const formData = [...new FormData(e.target).entries()];
 
-        const data = formData.reduce((acc, [k, v]) => Object.assign(acc, {
-            [k]: v
-        }), {});
+        const data = formData.reduce((acc, [k, v]) => Object.assign(acc, {[k]: v}), {});
 
         const emptyFields = formData.filter(([k, v]) => k != 'material' && v == '');
 
@@ -83,7 +81,7 @@ export function createPage(ctx) {
                 }
             }
 
-            data.year = Number(data.year);
+            data.year  = Number(data.year);
             data.price = Number(data.price);
 
             await createFurniture(data);

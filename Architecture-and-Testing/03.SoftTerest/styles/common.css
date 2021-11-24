@@ -43,7 +43,6 @@ nav a {
 nav img {
   height: 3rem;
 }
-
-.hidden {
-  display: none;
+.welcome-msg{
+  margin-left: 840px;
 }

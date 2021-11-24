@@ -1,29 +1,72 @@
-import { createIdea } from '../data.js';
-import { el, showSection} from '../dom.js';
+import { createIdea } from "../api/data.js";
+import { html } from "../library.js";
 
-const section = document.getElementById('create-page');
-section.remove();
 
-const form = section.querySelector('form');
-form.addEventListener('submit', onSubmit);
-let ctx = null;
+const template = (onSubmit) => html `
 
-export async function showCreatePage(ctxTarget){
-    ctx = ctxTarget;
-    ctx = showSection(section);
-}
+  <div class="container home wrapper  my-md-5 pl-md-5">
+        <div class=" d-md-flex flex-mb-equal ">
+            <div class="col-md-6">
+                <img class="responsive-ideas create" src="./images/creativity_painted_face.jpg" alt="">
+            </div>
+            <form @submit=${onSubmit} class="form-idea col-md-5" action="#/create" method="post">
+                <div class="text-center mb-4">
+                    <h1 class="h3 mb-3 font-weight-normal">Share Your Idea</h1>
+                </div>
+                <div class="form-label-group">
+                    <label for="ideaTitle">Title</label>
+                    <input type="text" id="ideaTitle" name="title" class="form-control" placeholder="What is your idea?"
+                         autofocus="">
+                </div>
+                <div class="form-label-group">
+                    <label for="ideaDescription">Description</label>
+                    <textarea type="text" name="description" class="form-control" placeholder="Description"
+                        ></textarea>
+                </div>
+                <div class="form-label-group">
+                    <label for="inputURL">Add Image</label>
+                    <input type="text" id="inputURL" name="imageURL" class="form-control" placeholder="Image URL"
+                        >
 
-async function onSubmit(e){
+                </div>
+                <button class="btn btn-lg btn-dark btn-block" type="submit">Create</button>
 
-    e.preventDefault();
+                <p class="mt-5 mb-3 text-muted text-center">© SoftTerest - 2021.</p>
+            </form>
+        </div>
+  </div>
+`;
 
-    const formData = new FormData(e.target);
+export function createPage(ctx){
+    
+  update();
 
-    const title = formData.get('title').trim();
-    const descr = formData.get('description').trim();
-    const img   = formData.get('imageURL').trim();
+    function update() {
 
-    createIdea({title, descr, img});
+        ctx.render(template(onSubmit));
+    }
+    
+    async function onSubmit(e) {
 
-    ctx.goTo('catalog');
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+
+      const title       = formData.get('title').trim();
+      const description = formData.get('description').trim();
+      const img         = formData.get('imageURL').trim();
+
+      if(title.length < 6 || description.length < 10 || img.length < 5){
+
+        throw new Error(`Please enter a valid input data!`);
+      }
+
+      const data = { title, description, img };
+
+      await createIdea(data);
+
+      ctx.page.redirect('/dashboard');
+      
+      update();
+  } 
 }

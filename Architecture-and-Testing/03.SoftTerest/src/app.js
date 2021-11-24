@@ -1,69 +1,55 @@
-import { showSection } from "./dom.js"
-import { showCatalogPage } from "./views/catalog.js"
-import { showCreatePage } from "./views/create.js"
-import { showDetailsPage } from "./views/details.js"
-import { showHomePage } from "./views/home.js"
-import { showLoginPage } from "./views/login.js"
-import { showRegisterPage } from "./views/register.js"
+import { page, render }  from './library.js';
+import { logout }        from './api/data.js';
+import { getUserData }   from './utils.js';
+import { createPage }    from './views/create.js';
+import { dashboardPage } from './views/dashboard.js';
+import { detailsPage }   from './views/details.js';
+import { homePage }      from './views/home.js';
+import { loginPage }     from './views/login.js';
+import { registerPage }  from './views/register.js';
 
-const links = {
-    'home-link'    : 'home',
-    'catalog-link' : 'catalog',
-    'create-link'  : 'create',
-    'login-link'   : 'login',
-    'register-link': 'register',
-    'details-link' : 'details'
-}
 
-const views = {
-    'home'    : showHomePage,
-    'catalog' : showCatalogPage,
-    'create'  : showCreatePage,
-    'login'   : showLoginPage,
-    'register': showRegisterPage,
-    'details' : showDetailsPage
-}
+const root = document.querySelector('.root');
 
-const nav = document.querySelector('nav');
+document.getElementById('logoutBtn').addEventListener('click', onLogout);
 
-nav.addEventListener('click', onNavigate);
+page(decorateContext);
+page('/', homePage);
+page('/details/:id', detailsPage);
+page('/create', createPage);
+page('/login', loginPage);
+page('/register', registerPage);
+page('/dashboard', dashboardPage);
 
-const ctx = {
 
-    goTo,
-    showSection,
-    updateNav
-}
 updateNav();
-goTo('home');
-
-function onNavigate(e){
-
-    const name = links[e.target.parentElement.id];
-
-    if(name){
-        e.preventDefault();
-        goTo(name);
-    }
-}
-
-function goTo(name, ...params){
-
-    const view = views[name];
-
-    if(typeof view == 'function'){
-        view(ctx, ... params);
-    }
-}
+page.start();
 
 function updateNav(){
-    const userData = JSON.parse(sessionStorage.getItem('userData'));
-    
-    if(userData != null){
-        [...nav.querySelectorAll('.user')].forEach(x => x.style.display = 'block');
-        [...nav.querySelectorAll('.guest')].forEach(x => x.style.display = 'none');
+
+    const userData = getUserData();
+
+    if(userData){
+        document.querySelectorAll('.user').forEach(x => x.style.display = 'inline-block');
+        document.querySelectorAll('.guest').forEach(x => x.style.display = 'none');
+        document.querySelector('.welcome-msg').textContent = `Welcome ${userData.email}`;
     }else{
-        [...nav.querySelectorAll('.user')].forEach(x => x.style.display = 'none');
-        [...nav.querySelectorAll('.guest')].forEach(x => x.style.display = 'block');
+        document.querySelectorAll('.user').forEach(x => x.style.display = 'none');
+        document.querySelectorAll('.guest').forEach(x => x.style.display = 'inline-block');
+        document.querySelector('.welcome-msg').textContent = `Welcome guest`;
     }
+}
+
+function decorateContext(ctx, next){
+
+    ctx.render = (content) => render(content, root);
+    ctx.updateNav = updateNav;
+    next();
+}
+
+async function onLogout(){
+
+    await logout();
+    updateNav();
+    page.redirect('/');
 }
