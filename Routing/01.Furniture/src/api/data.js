@@ -13,19 +13,21 @@ export async function detailFurniture(id){
     return api.get(`/data/catalog/${id}`);
 }
 
-export async function editFurniture(id){
-    return api.get(`/data/catalog/${id}`);
-}
-
-export async function createFurniture(item){
-
-    return api.post('/data/catalog');
-}
-
-export async function deleteIdea(id){
-    return api.del('/data/catalog/' + id)
-}
 
 export async function myFurniture(userId){
     return api.get(`/data/catalog?where=_ownerId%3D%22${userId}%22`);
 }
+
+export async function createFurniture(item){
+    
+    return api.post('/data/catalog', item);
+}
+
+export async function editFurniture(id, data){
+    return api.put(`/data/catalog/${id}`, data);
+}
+
+export async function deleteItem(id){
+    return api.del('/data/catalog/' + id)
+}
+

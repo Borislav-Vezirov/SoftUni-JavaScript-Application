@@ -25,7 +25,7 @@ export async function request(url, options){
         }
 
     } catch (error) {
-        alert(error.message);
+        //alert(error.message);
         throw error
     }
 }

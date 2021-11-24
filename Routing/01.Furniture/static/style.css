@@ -211,3 +211,11 @@ img {
 .is-invalid {
     border-left: 2px solid red;
 }
+
+.error{
+    color: red;
+}
+
+header {
+    height: 43px;
+}
