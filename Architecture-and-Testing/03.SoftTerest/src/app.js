@@ -49,7 +49,7 @@ function decorateContext(ctx, next){
 
 async function onLogout(){
 
-    await logout();
+    logout();
     updateNav();
     page.redirect('/');
 }
